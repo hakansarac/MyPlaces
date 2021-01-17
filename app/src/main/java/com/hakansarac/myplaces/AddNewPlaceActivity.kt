@@ -26,7 +26,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
 
-        buttonSave.setBackgroundColor(Color.parseColor("#FFFFBA93"))
+        //buttonSave.setBackgroundColor(Color.parseColor("#FFFFBA93"))
 
         dateSetListener = DatePickerDialog.OnDateSetListener{ view, year,month, dayOfMonth ->
             calendar.set(Calendar.YEAR,year)
