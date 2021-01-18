@@ -19,6 +19,8 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.hakansarac.myplaces.R
+import com.hakansarac.myplaces.database.DatabaseHandler
+import com.hakansarac.myplaces.models.PlaceModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -58,6 +60,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
             calendar.set(Calendar.DAY_OF_MONTH,dayOfMonth)
             updateDateView()
         }
+        updateDateView()
         editTextDate.setOnClickListener(this)
         textViewAddImage.setOnClickListener(this)   //View.OnClickListener inherited
         buttonSave.setOnClickListener(this)
@@ -81,7 +84,39 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 pictureDialog.show()
             }
             R.id.buttonSave -> {
+                when{
+                    editTextTitle.text.isNullOrEmpty() ->
+                        Toast.makeText(this@AddNewPlaceActivity,"Please enter a title.",Toast.LENGTH_SHORT).show()
 
+                    editTextDescription.text.isNullOrEmpty() ->
+                        Toast.makeText(this@AddNewPlaceActivity,"Please enter a description.",Toast.LENGTH_SHORT).show()
+
+                    editTextLocation.text.isNullOrEmpty() ->
+                        Toast.makeText(this@AddNewPlaceActivity,"Please enter a location.",Toast.LENGTH_SHORT).show()
+
+                    saveImageToInternalStorage == null ->
+                        Toast.makeText(this@AddNewPlaceActivity,"Please select an image.",Toast.LENGTH_SHORT).show()
+                    else ->{
+                        val placeModel = PlaceModel(
+                                0,
+                                editTextTitle.text.toString(),
+                                saveImageToInternalStorage.toString(),
+                                editTextDescription.text.toString(),
+                                editTextDate.text.toString(),
+                                editTextLocation.text.toString(),
+                                mLatitude,
+                                mLongitude
+                        )
+                        val dbHandler = DatabaseHandler(this)
+                        val addMyPlace = dbHandler.addHappyPlace(placeModel)    //if success it return positive value
+
+                        //if success
+                        if(addMyPlace>0){
+                            Toast.makeText(applicationContext,"The place details have been inserted successfully.",Toast.LENGTH_LONG).show()
+                            finish()
+                        }
+                    }
+                }
             }
         }
     }
