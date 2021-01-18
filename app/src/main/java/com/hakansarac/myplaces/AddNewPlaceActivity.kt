@@ -1,6 +1,7 @@
 package com.hakansarac.myplaces
 
 import android.Manifest
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
@@ -9,6 +10,7 @@ import android.graphics.Color
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
 import android.widget.Toast
@@ -18,6 +20,7 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_add_new_place.*
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,8 +32,6 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_new_place)
-
-
 
         setSupportActionBar(toolbarAddNewPlace)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)   //add back button
@@ -77,13 +78,32 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ).withListener(object: MultiplePermissionsListener{
             override fun onPermissionsChecked(report: MultiplePermissionsReport?){
                 if(report!!.areAllPermissionsGranted()){
-                    Toast.makeText(this@AddNewPlaceActivity,"Storage permissions are granted",Toast.LENGTH_SHORT).show()
+                    val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                    startActivityForResult(galleryIntent,GALLERY)
                 }
             }
             override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {
                 showRationalDialogForPermissions()
             }
         }).onSameThread().check()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if(resultCode == Activity.RESULT_OK){
+            if(requestCode == GALLERY){
+                if(data != null){
+                    val contentURI = data.data
+                    try{
+                        val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver,contentURI)
+                        imageViewPlaceImage.setImageBitmap(selectedImageBitmap)
+                    }catch(e:IOException){
+                        e.printStackTrace()
+                        Toast.makeText(this@AddNewPlaceActivity,"Oops! Failed to load image from gallery.",Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+        }
     }
 
     private fun showRationalDialogForPermissions() {
@@ -107,5 +127,9 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
         val calendarFormat = "dd.MM.yyyy"
         val sdf = SimpleDateFormat(calendarFormat,Locale.getDefault())
         editTextDate.setText(sdf.format(calendar.time).toString())
+    }
+
+    companion object{       //static variables
+        private const val GALLERY = 1
     }
 }
