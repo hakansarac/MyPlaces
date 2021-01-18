@@ -5,6 +5,8 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
+import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -13,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.karumi.dexter.Dexter
@@ -21,7 +24,10 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import kotlinx.android.synthetic.main.activity_add_new_place.*
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
+import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -115,6 +121,8 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     val contentURI = data.data
                     try{
                         val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver,contentURI)
+                        val saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
+                        Log.e("Saved message","Path::$saveImageToInternalStorage")  ////to control in Logcat as error
                         imageViewPlaceImage.setImageBitmap(selectedImageBitmap)
                     }catch(e:IOException){
                         e.printStackTrace()
@@ -123,9 +131,26 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }else if(requestCode == CAMERA){
                 val thumbnail : Bitmap = data!!.extras!!.get("data") as Bitmap
+                val saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
+                Log.e("Saved message","Path::$saveImageToInternalStorage") //to control in Logcat as error
                 imageViewPlaceImage.setImageBitmap(thumbnail)
             }
         }
+    }
+
+    private fun saveImageToInternalStorage(bitmap:Bitmap):Uri{
+        val wrapper = ContextWrapper(applicationContext)
+        var file = wrapper.getDir(IMAGE_DIRECTORY, Context.MODE_PRIVATE) //other apps will not be able to access this directory(MODE_PRIVATE)
+        file = File(file,"${UUID.randomUUID()}.jpg")
+        try{
+            val stream : OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG,100,stream)
+            stream.flush()
+            stream.close()
+        }catch(e:IOException){
+            e.printStackTrace()
+        }
+        return Uri.parse(file.absolutePath)
     }
 
     private fun showRationalDialogForPermissions() {
@@ -154,5 +179,6 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
     companion object{       //static variables
         private const val GALLERY = 1
         private const val CAMERA = 2
+        private const val IMAGE_DIRECTORY = "MyPlacesImages"
     }
 }
