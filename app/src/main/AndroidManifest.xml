@@ -12,11 +12,11 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.MyPlaces">
-        <activity android:name=".AddNewPlaceActivity"
+        <activity android:name=".activities.AddNewPlaceActivity"
             android:screenOrientation="portrait"
             android:label="Add New Place"
             android:theme="@style/CustomNoActionBarTheme"/>
-        <activity android:name=".MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

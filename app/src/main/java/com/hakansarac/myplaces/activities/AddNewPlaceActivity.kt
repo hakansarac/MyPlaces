@@ -1,4 +1,4 @@
-package com.hakansarac.myplaces
+package com.hakansarac.myplaces.activities
 
 import android.Manifest
 import android.app.Activity
@@ -18,6 +18,7 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.hakansarac.myplaces.R
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -35,6 +36,9 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
     private var calendar = Calendar.getInstance()
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+    private var saveImageToInternalStorage : Uri? = null
+    private var mLatitude : Double = 0.0
+    private var mLongitude : Double = 0.0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,6 +60,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
         editTextDate.setOnClickListener(this)
         textViewAddImage.setOnClickListener(this)   //View.OnClickListener inherited
+        buttonSave.setOnClickListener(this)
     }
 
     override fun onClick(p0: View?) {
@@ -75,6 +80,9 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
                 pictureDialog.show()
             }
+            R.id.buttonSave -> {
+
+            }
         }
     }
 
@@ -87,7 +95,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport?){
                 if(report!!.areAllPermissionsGranted()){
                     val galleryIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-                    startActivityForResult(galleryIntent,CAMERA)
+                    startActivityForResult(galleryIntent, CAMERA)
                 }
             }
             override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {
@@ -104,7 +112,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
             override fun onPermissionsChecked(report: MultiplePermissionsReport?){
                 if(report!!.areAllPermissionsGranted()){
                     val galleryIntent = Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    startActivityForResult(galleryIntent,GALLERY)
+                    startActivityForResult(galleryIntent, GALLERY)
                 }
             }
             override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>?, token: PermissionToken?) {
@@ -121,7 +129,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     val contentURI = data.data
                     try{
                         val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver,contentURI)
-                        val saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
+                        saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
                         Log.e("Saved message","Path::$saveImageToInternalStorage")  ////to control in Logcat as error
                         imageViewPlaceImage.setImageBitmap(selectedImageBitmap)
                     }catch(e:IOException){
@@ -131,7 +139,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }else if(requestCode == CAMERA){
                 val thumbnail : Bitmap = data!!.extras!!.get("data") as Bitmap
-                val saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
+                saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
                 Log.e("Saved message","Path::$saveImageToInternalStorage") //to control in Logcat as error
                 imageViewPlaceImage.setImageBitmap(thumbnail)
             }
