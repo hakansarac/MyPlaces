@@ -44,6 +44,13 @@ class MainActivity : AppCompatActivity() {
 
         val placesAdapter = MyPlacesAdapter(this,myPlaceList)
         recyclerViewMyPlacesList.adapter = placesAdapter
+
+        placesAdapter.setOnClickListener(object:MyPlacesAdapter.OnClickListener{
+            override fun onClick(position: Int, model: PlaceModel) {
+                val intent = Intent(this@MainActivity,MyPlaceDetailActivity::class.java)
+                startActivity(intent)
+            }
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
