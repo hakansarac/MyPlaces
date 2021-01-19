@@ -112,7 +112,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
                         //if success
                         if(addMyPlace>0){
-                            Toast.makeText(applicationContext,"The place details have been inserted successfully.",Toast.LENGTH_LONG).show()
+                            setResult(Activity.RESULT_OK)
                             finish()
                         }
                     }
