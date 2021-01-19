@@ -6,6 +6,23 @@
     android:layout_height="match_parent"
     tools:context=".activities.MainActivity">
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewMyPlacesList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        tools:visibility="gone"/>
+
+    <TextView
+        android:id="@+id/textViewNoPlace"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:text="@string/text_no_item_note"
+        android:textSize="@dimen/no_place_text_size"
+        android:visibility="visible"
+        tools:visibility="visible"/>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddNewPlace"
         android:layout_width="wrap_content"

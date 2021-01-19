@@ -9,5 +9,8 @@
     <color name="white">#FFFFFFFF</color>
     <color name="primary_text">#212121</color>
     <color name="secondary_text">#9AA2AF</color>
+    
     <color name="button_background">#FFFFBA93</color>
+    <color name="circular_image_border_color">#757575</color>
+    <color name="item_my_place_description_text_color">#606060</color>
 </resources>
