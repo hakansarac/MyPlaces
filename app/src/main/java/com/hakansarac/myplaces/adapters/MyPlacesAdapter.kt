@@ -1,12 +1,16 @@
 package com.hakansarac.myplaces.adapters
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.hakansarac.myplaces.R
+import com.hakansarac.myplaces.activities.AddNewPlaceActivity
+import com.hakansarac.myplaces.activities.MainActivity
 import com.hakansarac.myplaces.models.PlaceModel
 import kotlinx.android.synthetic.main.item_my_place.view.*
 
@@ -52,6 +56,14 @@ open class MyPlacesAdapter(
 
     override fun getItemCount(): Int {
         return list.size
+    }
+
+    //to swipe
+    fun notifyEditItem(activity: Activity, position: Int, requestCode: Int){
+        val intent = Intent(context,AddNewPlaceActivity::class.java)
+        intent.putExtra(MainActivity.EXTRA_PLACE_DETAILS,list[position])
+        activity.startActivityForResult(intent,requestCode)
+        notifyItemChanged(position) //to see any changes without restarting application
     }
 
     interface OnClickListener{

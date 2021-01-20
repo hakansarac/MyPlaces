@@ -42,6 +42,8 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private var mLatitude : Double = 0.0
     private var mLongitude : Double = 0.0
 
+    private var mMyPlaceDetail : PlaceModel? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_new_place)
@@ -54,6 +56,11 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
         //buttonSave.setBackgroundColor(Color.parseColor("#FFFFBA93"))
 
+        //if it will be edited
+        if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
+            mMyPlaceDetail = intent.getParcelableExtra(MainActivity.EXTRA_PLACE_DETAILS) as PlaceModel?
+        }
+
         dateSetListener = DatePickerDialog.OnDateSetListener{ view, year,month, dayOfMonth ->
             calendar.set(Calendar.YEAR,year)
             calendar.set(Calendar.MONTH,month)
@@ -61,6 +68,22 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
             updateDateView()
         }
         updateDateView()
+
+        //if activity is on edit mode
+        if(mMyPlaceDetail != null){
+            supportActionBar?.title = "Edit Place"
+            editTextTitle.setText(mMyPlaceDetail!!.title)
+            editTextDescription.setText(mMyPlaceDetail!!.description)
+            editTextDate.setText(mMyPlaceDetail!!.date)
+            editTextLocation.setText(mMyPlaceDetail!!.location)
+            mLatitude = mMyPlaceDetail!!.latitude
+            mLongitude = mMyPlaceDetail!!.longitude
+
+            saveImageToInternalStorage = Uri.parse(mMyPlaceDetail!!.image)
+            imageViewPlaceImage.setImageURI(saveImageToInternalStorage)
+            buttonSave.text = "UPDATE"
+        }
+
         editTextDate.setOnClickListener(this)
         textViewAddImage.setOnClickListener(this)   //View.OnClickListener inherited
         buttonSave.setOnClickListener(this)
@@ -98,7 +121,7 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(this@AddNewPlaceActivity,"Please select an image.",Toast.LENGTH_SHORT).show()
                     else ->{
                         val placeModel = PlaceModel(
-                                0,
+                                if(mMyPlaceDetail == null) 0 else mMyPlaceDetail!!.id,
                                 editTextTitle.text.toString(),
                                 saveImageToInternalStorage.toString(),
                                 editTextDescription.text.toString(),
@@ -108,12 +131,20 @@ class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
                                 mLongitude
                         )
                         val dbHandler = DatabaseHandler(this)
-                        val addMyPlace = dbHandler.addHappyPlace(placeModel)    //if success it return positive value
-
-                        //if success
-                        if(addMyPlace>0){
-                            setResult(Activity.RESULT_OK)
-                            finish()
+                        if(mMyPlaceDetail == null) {
+                            val addMyPlace = dbHandler.addMyPlace(placeModel)    //if success it return positive value
+                            //if success
+                            if (addMyPlace > 0) {
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                            }
+                        }else{
+                            val updateMyPlace = dbHandler.updateMyPlace(placeModel)    //if success it return positive value
+                            //if success
+                            if (updateMyPlace > 0) {
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                            }
                         }
                     }
                 }

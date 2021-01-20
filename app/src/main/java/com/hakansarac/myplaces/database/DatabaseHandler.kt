@@ -44,7 +44,7 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
         onCreate(p0)
     }
 
-    fun addHappyPlace(myPlace: PlaceModel): Long {
+    fun addMyPlace(myPlace: PlaceModel): Long {
         val db = this.writableDatabase
 
         val contentValues = ContentValues()
@@ -60,6 +60,24 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
 
         db.close()
         return result
+    }
+
+    fun updateMyPlace(myPlace: PlaceModel): Int {
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(KEY_TITLE, myPlace.title)
+        contentValues.put(KEY_IMAGE, myPlace.image)
+        contentValues.put(KEY_DESCRIPTION,myPlace.description)
+        contentValues.put(KEY_DATE, myPlace.date)
+        contentValues.put(KEY_LOCATION, myPlace.location)
+        contentValues.put(KEY_LATITUDE, myPlace.latitude)
+        contentValues.put(KEY_LONGITUDE, myPlace.longitude)
+
+        val success = db.update(TABLE_MY_PLACE,contentValues, KEY_ID + "=" + myPlace.id,null)
+
+        db.close()
+        return success
     }
 
     fun getAllMyPlaces(): ArrayList<PlaceModel>{

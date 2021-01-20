@@ -7,12 +7,15 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.hakansarac.myplaces.R
 import com.hakansarac.myplaces.adapters.MyPlacesAdapter
 import com.hakansarac.myplaces.database.DatabaseHandler
 import com.hakansarac.myplaces.models.PlaceModel
 import kotlinx.android.synthetic.main.activity_main.*
+import pl.kitek.rvswipetodelete.SwipeToEditCallback
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,6 +59,17 @@ class MainActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         })
+
+        //swipe to edit item
+        val editSwipeHandler = object : SwipeToEditCallback(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = recyclerViewMyPlacesList.adapter as MyPlacesAdapter
+                adapter.notifyEditItem(this@MainActivity,viewHolder.adapterPosition, ADD_PLACE_ACTIVITY_REQUEST_CODE)
+            }
+        }
+
+        val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
+        editItemTouchHelper.attachToRecyclerView(recyclerViewMyPlacesList)
     }
 
     //to show database dynamically, when user adds new place to list.
