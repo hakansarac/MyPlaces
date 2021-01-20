@@ -62,6 +62,13 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
         return result
     }
 
+    fun deleteMyPlace(myPlace:PlaceModel):Int{
+        val db = this.writableDatabase
+        val success = db.delete(TABLE_MY_PLACE, KEY_ID + "=" + myPlace.id,null)
+        db.close()
+        return success
+    }
+
     fun updateMyPlace(myPlace: PlaceModel): Int {
         val db = this.writableDatabase
 

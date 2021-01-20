@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.hakansarac.myplaces.R
 import com.hakansarac.myplaces.activities.AddNewPlaceActivity
 import com.hakansarac.myplaces.activities.MainActivity
+import com.hakansarac.myplaces.database.DatabaseHandler
 import com.hakansarac.myplaces.models.PlaceModel
 import kotlinx.android.synthetic.main.item_my_place.view.*
 
@@ -64,6 +65,15 @@ open class MyPlacesAdapter(
         intent.putExtra(MainActivity.EXTRA_PLACE_DETAILS,list[position])
         activity.startActivityForResult(intent,requestCode)
         notifyItemChanged(position) //to see any changes without restarting application
+    }
+
+    fun removeAt(position:Int){
+        val dbHandler = DatabaseHandler(context)
+        val isDeleted = dbHandler.deleteMyPlace(list[position])
+        if(isDeleted>0){
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
     }
 
     interface OnClickListener{

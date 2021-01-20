@@ -14,6 +14,7 @@ import com.hakansarac.myplaces.R
 import com.hakansarac.myplaces.adapters.MyPlacesAdapter
 import com.hakansarac.myplaces.database.DatabaseHandler
 import com.hakansarac.myplaces.models.PlaceModel
+import com.hakansarac.myplaces.utils.SwipeToDeleteCallback
 import kotlinx.android.synthetic.main.activity_main.*
 import pl.kitek.rvswipetodelete.SwipeToEditCallback
 
@@ -70,6 +71,17 @@ class MainActivity : AppCompatActivity() {
 
         val editItemTouchHelper = ItemTouchHelper(editSwipeHandler)
         editItemTouchHelper.attachToRecyclerView(recyclerViewMyPlacesList)
+
+        val deleteSwipeHandler = object : SwipeToDeleteCallback(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = recyclerViewMyPlacesList.adapter as MyPlacesAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
+                getMyPlacesListFromDB()
+            }
+        }
+
+        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+        deleteItemTouchHelper.attachToRecyclerView(recyclerViewMyPlacesList)
     }
 
     //to show database dynamically, when user adds new place to list.
