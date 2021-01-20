@@ -18,11 +18,14 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        //to update our list members dynamically when user adds new place and comes back main activity
+        //we use startActivityForResult
         fabAddNewPlace.setOnClickListener {
             val intent = Intent(this, AddNewPlaceActivity::class.java)
             startActivityForResult(intent,ADD_PLACE_ACTIVITY_REQUEST_CODE)
         }
-        getMyPlacesListFromDB()
+        getMyPlacesListFromDB()     //shows place list saved in database
     }
 
     private fun getMyPlacesListFromDB(){
@@ -48,11 +51,14 @@ class MainActivity : AppCompatActivity() {
         placesAdapter.setOnClickListener(object:MyPlacesAdapter.OnClickListener{
             override fun onClick(position: Int, model: PlaceModel) {
                 val intent = Intent(this@MainActivity,MyPlaceDetailActivity::class.java)
+                intent.putExtra(EXTRA_PLACE_DETAILS,model)
+                //to do that parcelable or serializable are implemented to PlaceModel class, otherwise the function does not know the type of model
                 startActivity(intent)
             }
         })
     }
 
+    //to show database dynamically, when user adds new place to list.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if(requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE){
@@ -66,5 +72,6 @@ class MainActivity : AppCompatActivity() {
 
     companion object{
         var ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
+        var EXTRA_PLACE_DETAILS = "extra_place_details"
     }
 }
