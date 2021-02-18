@@ -32,6 +32,9 @@ class MainActivity : AppCompatActivity() {
         getMyPlacesListFromDB()     //shows place list saved in database
     }
 
+    /**
+     * A function to get the list of happy place from local database.
+     */
     private fun getMyPlacesListFromDB(){
         val dbHandler = DatabaseHandler(this)
         val myPlaceList = dbHandler.getAllMyPlaces()
@@ -45,6 +48,9 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    /**
+     * A function to populate the recyclerview to the UI.
+     */
     private fun setupMyPlacesRecyclerView(myPlaceList: ArrayList<PlaceModel>){
         recyclerViewMyPlacesList.layoutManager = LinearLayoutManager(this)
         recyclerViewMyPlacesList.setHasFixedSize(true)
@@ -84,9 +90,10 @@ class MainActivity : AppCompatActivity() {
         deleteItemTouchHelper.attachToRecyclerView(recyclerViewMyPlacesList)
     }
 
-    //to show database dynamically, when user adds new place to list.
+    // Call Back method to show database dynamically, when user adds new place to list.
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        // check if the request code is same as what is passed  here it is 'ADD_PLACE_ACTIVITY_REQUEST_CODE'
         if(requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE){
             if(resultCode == Activity.RESULT_OK){
                 getMyPlacesListFromDB()

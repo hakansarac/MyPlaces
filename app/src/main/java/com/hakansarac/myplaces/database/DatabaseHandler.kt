@@ -8,12 +8,14 @@ import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import com.hakansarac.myplaces.models.PlaceModel
 
+//creating the database logic, extending the SQLiteOpenHelper base class
 class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,null,DATABASE_VERSION) {
     companion object{
         private const val DATABASE_VERSION = 1
-        private const val DATABASE_NAME = "MyPlacesDatabase"
-        private const val TABLE_MY_PLACE = "MyPlacesTable"
+        private const val DATABASE_NAME = "MyPlacesDatabase"        // Database name
+        private const val TABLE_MY_PLACE = "MyPlacesTable"          // Table Name
 
+        //All the Columns names
         private const val KEY_ID = "_id"
         private const val KEY_TITLE = "title"
         private const val KEY_IMAGE = "image"
@@ -25,6 +27,7 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
+        //creating table with fields
         val CREATE_MY_PLACE_TABLE = (
                 "CREATE TABLE " +
                 TABLE_MY_PLACE + "(" +
@@ -44,6 +47,9 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
         onCreate(p0)
     }
 
+    /**
+     * Function to insert a Happy Place details to SQLite Database.
+     */
     fun addMyPlace(myPlace: PlaceModel): Long {
         val db = this.writableDatabase
 
@@ -62,13 +68,20 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
         return result
     }
 
+    /**
+     * Function to delete happy place details.
+     */
     fun deleteMyPlace(myPlace:PlaceModel):Int{
         val db = this.writableDatabase
-        val success = db.delete(TABLE_MY_PLACE, KEY_ID + "=" + myPlace.id,null)
+        // Deleting Row
+        val success = db.delete(TABLE_MY_PLACE, KEY_ID + "=" + myPlace.id,null) //2nd argument is String containing nullColumnHack
         db.close()
         return success
     }
 
+    /**
+     * Function to update record
+     */
     fun updateMyPlace(myPlace: PlaceModel): Int {
         val db = this.writableDatabase
 
@@ -81,13 +94,18 @@ class DatabaseHandler(context: Context): SQLiteOpenHelper(context,DATABASE_NAME,
         contentValues.put(KEY_LATITUDE, myPlace.latitude)
         contentValues.put(KEY_LONGITUDE, myPlace.longitude)
 
-        val success = db.update(TABLE_MY_PLACE,contentValues, KEY_ID + "=" + myPlace.id,null)
+        // Updating Row
+        val success = db.update(TABLE_MY_PLACE,contentValues, KEY_ID + "=" + myPlace.id,null)   //2nd argument is String containing nullColumnHack
 
         db.close()
         return success
     }
 
+    /**
+     * Function to read all the list of Happy Places data which are inserted.
+     */
     fun getAllMyPlaces(): ArrayList<PlaceModel>{
+        // A list is initialize using the data model class in which we will add the values from cursor.
         val allPlacesList : ArrayList<PlaceModel> = ArrayList<PlaceModel>()
         val selectQuery = "SELECT * FROM $TABLE_MY_PLACE"
         val db = this.readableDatabase

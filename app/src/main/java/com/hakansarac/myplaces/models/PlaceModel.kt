@@ -4,6 +4,10 @@ import android.os.Parcel
 import android.os.Parcelable
 import java.io.Serializable
 
+/**
+ * A Data Model Class for Happy Place details. We will use this data class in all over the project even when
+ * dealing with local SQLite database.
+ */
 data class PlaceModel(
         val id : Int,
         val title : String?,

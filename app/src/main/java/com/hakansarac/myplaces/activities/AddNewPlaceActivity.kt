@@ -36,11 +36,19 @@ import java.util.*
 
 class AddNewPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
+    /**
+     * An variable to get an instance calendar using the default time zone and locale.
+     */
     private var calendar = Calendar.getInstance()
+
+    /**
+     * A variable for DatePickerDialog OnDateSetListener.
+     * The listener used to indicate the user has finished selecting a date. Which we will be initialize later on.
+     */
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
     private var saveImageToInternalStorage : Uri? = null
-    private var mLatitude : Double = 0.0
-    private var mLongitude : Double = 0.0
+    private var mLatitude : Double = 0.0    // A variable which will hold the latitude value.
+    private var mLongitude : Double = 0.0   // A variable which will hold the longitude value.
 
     private var mMyPlaceDetail : PlaceModel? = null
 

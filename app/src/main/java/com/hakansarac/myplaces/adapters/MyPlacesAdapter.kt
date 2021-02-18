@@ -23,6 +23,12 @@ open class MyPlacesAdapter(
 
     private var onClickListener : OnClickListener? = null
 
+    /**
+     * Inflates the item views which is designed in xml layout file
+     *
+     * create a new
+     * {@link ViewHolder} and initializes some private fields to be used by RecyclerView.
+     */
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
         return MyViewHolder(
@@ -39,6 +45,16 @@ open class MyPlacesAdapter(
         this.onClickListener = onClickListener
     }
 
+    /**
+     * Binds each item in the ArrayList to a view
+     *
+     * Called when RecyclerView needs a new {@link ViewHolder} of the given type to represent
+     * an item.
+     *
+     * This new ViewHolder should be constructed with a new View that can represent the items
+     * of the given type. You can either create a new View manually or inflate it from an XML
+     * layout file.
+     */
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         val model = list[position]
 
@@ -54,12 +70,16 @@ open class MyPlacesAdapter(
         }
     }
 
-
+    /**
+     * Gets the number of items in the list
+     */
     override fun getItemCount(): Int {
         return list.size
     }
 
-    //to swipe
+    /**
+     * A function to edit the added happy place detail and pass the existing details through intent.
+     */
     fun notifyEditItem(activity: Activity, position: Int, requestCode: Int){
         val intent = Intent(context,AddNewPlaceActivity::class.java)
         intent.putExtra(MainActivity.EXTRA_PLACE_DETAILS,list[position])
@@ -67,6 +87,9 @@ open class MyPlacesAdapter(
         notifyItemChanged(position) //to see any changes without restarting application
     }
 
+    /**
+     * A function to delete the added happy place detail from the local storage.
+     */
     fun removeAt(position:Int){
         val dbHandler = DatabaseHandler(context)
         val isDeleted = dbHandler.deleteMyPlace(list[position])
@@ -76,9 +99,15 @@ open class MyPlacesAdapter(
         }
     }
 
+    /**
+     * A function to bind the onclickListener.
+     */
     interface OnClickListener{
         fun onClick(position:Int,model:PlaceModel)
     }
 
+    /**
+     * A ViewHolder describes an item view and metadata about its place within the RecyclerView.
+     */
     private class MyViewHolder(view: View) : RecyclerView.ViewHolder(view)
 }
